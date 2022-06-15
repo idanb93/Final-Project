@@ -3,9 +3,21 @@ import {useState} from 'react';
 
 function Signup() {
 
-    const [signupData, setSignupData] = useState({});
-
+    const [signupData, setSignupData] = useState({
+        company_name: '',
+        email: '',
+        password: '',
+    });
     const register = () => {
+
+        const signupDataValues = Object.values(signupData);
+
+        for(let value of signupDataValues) {
+            if (!value){
+                alert('Please fill all the details!');
+                return;
+            }
+        }
 
         fetch(`/signup`, {
             method: 'POST',

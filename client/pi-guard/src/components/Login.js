@@ -5,9 +5,21 @@ function Login(props) {
 
     let navigate = useNavigate();
 
-    const [loginDetails, setLoginDetails] = useState({});
+    const [loginDetails, setLoginDetails] = useState({
+        email: '',
+        password: '',
+    });
 
     const authenticate = () => {
+
+        const loginDetailsValues = Object.values(loginDetails);
+
+        for(let value of loginDetailsValues) {
+            if (!value){
+                alert('Please fill all the details!');
+                return;
+            }
+        }
 
         try {
             fetch('/signin', {
