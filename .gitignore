@@ -1,0 +1,29 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/client/pi-guard/node_modules
+/client/pi-guard/.pnp
+/client/pi-guard/.pnp.js
+
+# testing
+/client/pi-guard/coverage
+
+# production
+/client/pi-guard/build
+
+# misc
+/client/pi-guard/.DS_Store
+/client/pi-guard/.env.local
+/client/pi-guard/.env.development.local
+/client/pi-guard/.env.test.local
+/client/pi-guard/.env.production.local
+
+/client/pi-guard/npm-debug.log*
+/client/pi-guard/yarn-debug.log*
+/client/pi-guard/yarn-error.log*
+
+package-lock.json
+/client/pi-guard/package-lock.json
+.env
+/client/pi-guard/.env
