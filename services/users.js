@@ -39,9 +39,9 @@ const generateToken = (email, company_name) => {
 
 const _authenticateUser = (req, res) => {
 
-    const { email, password } = req.body;
+    const { email, encpass } = req.body;
 
-    authenticateUser(email, password)
+    authenticateUser(email, encpass)
         .then(response => {
             if (response.isValidUser) {
                 if (req.session) {

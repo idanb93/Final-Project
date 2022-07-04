@@ -1,6 +1,7 @@
 
 const db = require('../connections/heroku-pg');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -46,11 +47,12 @@ const getUserData = (company_name) => {
 
 }
 
-const authenticateUser = async (email, password)=>{
+const authenticateUser = async (email, encpass)=>{
 
     try {
-        const user = await db('users').where('email', email).andWhere('password', password);
-        
+        const user = await db('users').where('email', email);
+        const match = await bcrypt.compare(encpass, user[0].password)
+
         if (!user || user.length === 0){
             return {isValidUser: false, msg: 'Invalid username or password'}
         }

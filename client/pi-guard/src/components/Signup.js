@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom';
 import {useState} from 'react';
 
+import bcrypt from 'bcryptjs';
+
 function Signup() {
 
     const [signupData, setSignupData] = useState({
@@ -9,6 +11,9 @@ function Signup() {
         password: '',
     });
     const register = () => {
+
+        const salt = bcrypt.genSaltSync();
+        const encpass = bcrypt.hashSync(signupData.password, salt);
 
         const signupDataValues = Object.values(signupData);
 
@@ -27,7 +32,7 @@ function Signup() {
             body: JSON.stringify({
                 company_name: signupData.company_name,
                 email: signupData.email,
-                password: signupData.password,
+                encpass
             })
         })
         .then(response=>response.json())
