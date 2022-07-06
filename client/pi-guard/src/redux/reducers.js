@@ -1,7 +1,7 @@
+
 const initialState = {
     findings: [],
 }
-
 
 export const reducer = (state = initialState, action = {}) => {
 

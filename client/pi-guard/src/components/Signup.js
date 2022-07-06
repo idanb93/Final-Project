@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import {useState} from 'react';
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import bcrypt from 'bcryptjs';
+import crypto, { SHA256 } from "crypto-js";
 
 function Signup() {
 
@@ -10,15 +11,15 @@ function Signup() {
         email: '',
         password: '',
     });
+
     const register = () => {
 
-        const salt = bcrypt.genSaltSync();
-        const encpass = bcrypt.hashSync(signupData.password, salt);
-
+        const hashedpass = crypto.SHA256(signupData.password).toString();
+        console.log('register hashedpass: ',hashedpass);
         const signupDataValues = Object.values(signupData);
 
-        for(let value of signupDataValues) {
-            if (!value){
+        for (let value of signupDataValues) {
+            if (!value) {
                 alert('Please fill all the details!');
                 return;
             }
@@ -32,16 +33,17 @@ function Signup() {
             body: JSON.stringify({
                 company_name: signupData.company_name,
                 email: signupData.email,
-                encpass
+                password: hashedpass,
+
             })
         })
-        .then(response=>response.json())
-        .then(data=>{
-            alert(data.msg);
-        })
-        .catch(err=>{
-            alert(err);
-        })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.msg);
+            })
+            .catch(err => {
+                alert(err);
+            })
 
     }
 
@@ -55,16 +57,16 @@ function Signup() {
 
                     <form>
 
-                    <div id='signup-inputs-container'>
-                        <input className='signup-input' type={'text'} placeholder={'Company Name'} onChange={(e=>{setSignupData(prevUser=>{ return {...prevUser, company_name: e.target.value}} )} )}/>
-                        <input className='signup-input' type={'text'} placeholder={'Email'} onChange={(e=>{setSignupData(prevUser=>{ return {...prevUser, email: e.target.value}} )} )}/>
-                        <input className='signup-input' type={'password'} placeholder={'Password'} onChange={(e=>{setSignupData(prevUser=>{ return {...prevUser, password: e.target.value}} )} )}/>
-                        <input className='signup-input' type={'password'} placeholder={'Re-enter Password'} />
-                    </div>
+                        <div id='signup-inputs-container'>
+                            <input className='signup-input' type={'text'} placeholder={'Company Name'} onChange={(e => { setSignupData(prevUser => { return { ...prevUser, company_name: e.target.value } }) })} />
+                            <input className='signup-input' type={'text'} placeholder={'Email'} onChange={(e => { setSignupData(prevUser => { return { ...prevUser, email: e.target.value } }) })} />
+                            <input className='signup-input' type={'password'} placeholder={'Password'} onChange={(e => { setSignupData(prevUser => { return { ...prevUser, password: e.target.value } }) })} />
+                            <input className='signup-input' type={'password'} placeholder={'Re-enter Password'} />
+                        </div>
 
-                    <div>
-                        <Link className="navbar-brand text-white text-lg brand-text" to="/signup"> <button className='signup-input' type='submit' onClick={register}>SIGN UP</button> </Link>
-                    </div>
+                        <div>
+                            <Link className="navbar-brand text-white text-lg brand-text" to="/signup"> <button className='signup-input' type='submit' onClick={register}>SIGN UP</button> </Link>
+                        </div>
 
                     </form>
                 </div>

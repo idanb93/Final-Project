@@ -1,10 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import Input from '@mui/material/Input';
 import { Button, Paper, Typography } from '@mui/material';
 
-import bcrypt from 'bcryptjs';
+import crypto, { SHA256 } from "crypto-js";
 
 function Login(props) {
 
@@ -16,10 +16,8 @@ function Login(props) {
     });
 
     const authenticate = () => {
-        
-        const salt = bcrypt.genSaltSync();
-        const encpass = bcrypt.hashSync(loginDetails.password, salt);
-        
+
+        const hashedpass = crypto.SHA256(loginDetails.password).toString();
         const loginDetailsValues = Object.values(loginDetails);
 
         for (let value of loginDetailsValues) {
@@ -37,7 +35,7 @@ function Login(props) {
                 },
                 body: JSON.stringify({
                     email: loginDetails.email,
-                    encpass,
+                    password: hashedpass,
                 })
             })
                 .then(response => response.json())
@@ -110,9 +108,9 @@ function Login(props) {
                 </form>
 
                 <div id="dont-have-an-account">
-                <Typography variant="h3" component="h4">
-                    Don't have an account ?
-                </Typography>
+                    <Typography variant="h3" component="h4">
+                        Don't have an account ?
+                    </Typography>
                     <Link to="/signup">
                         <Button
                             variant="contained"

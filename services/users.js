@@ -12,9 +12,14 @@ dotenv.config();
 
 // CREATE - POST insert/create a product
 const _insertUser = (req, res) => {
+
     insertUser(req.body)
         .then(response => {
-            res.send({ msg: response });
+            if (typeof response === 'object'){
+                res.send({msg: 'You have signed up sucessfully!'})
+            } else {
+                res.send({ msg: response });
+            }
         })
         .catch(err => {
             console.log(err);
@@ -39,9 +44,9 @@ const generateToken = (email, company_name) => {
 
 const _authenticateUser = (req, res) => {
 
-    const { email, encpass } = req.body;
+    const { email, password } = req.body;
 
-    authenticateUser(email, encpass)
+    authenticateUser(email, password)
         .then(response => {
             if (response.isValidUser) {
                 if (req.session) {
