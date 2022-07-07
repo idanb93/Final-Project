@@ -2,6 +2,7 @@
 const db = require('../connections/heroku-pg');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const bcrypt = require('bcrypt');
 
 dotenv.config();
 
@@ -17,12 +18,29 @@ const isPrimaryKeyExist = async (primaryKey, primaryKeyValue) => {
 
 const insertUser = async (user) => {
 
-    const alphaBet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-    const randomIndex = Math.floor(Math.random() * alphaBet.length);
-    const item = alphaBet[randomIndex];
+    const userPasswordSha256 = user['password'];
+    // console.log('userPasswordSha256', user['password']);
+    
+    // Using hashing algorithm which is delibertly slowed down 
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    let userPasswordBcrypt = bcrypt.hashSync(userPasswordSha256, salt);
 
-    user['password'] += item;
+    // Adding Pepper
+    
+    // const alphaBet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    //     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    // const randomIndex = Math.floor(Math.random() * alphaBet.length);
+    // const item = alphaBet[randomIndex];
+    
+    // console.log('salt', salt);
+    // console.log('userPasswordBcrypt', userPasswordBcrypt);
+    // userPasswordBcrypt += item;
+    // console.log('userPasswordBcrypt + pepper', userPasswordBcrypt);
+
+    user['password'] = userPasswordBcrypt;
+
+    // TODO: Add encryption, get the private key from a remote S3 bucket.
 
     try {
         const isUserExist = await isPrimaryKeyExist('email', user.email);
@@ -55,19 +73,10 @@ const getUserData = (company_name) => {
 
 const authenticateUser = async (email, password) => {
 
-    const alphaBet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-
     try {
+
         const user = await db('users').where('email', email);
-
-        let match = false;
-        let i = 0;
-
-        while (!match) {
-            match = password + alphaBet[i] === user[0].password;
-            i++;
-        }
+        const match = bcrypt.compareSync(password, user[0].password);
 
         if (!user || user.length === 0 || !match) {
             return { isValidUser: false, msg: 'Invalid username or password' }
