@@ -4,6 +4,8 @@ https://pi-guard.herokuapp.com/
 
 # Synopsis
 
+Developers Institute Final Project.
+
 In this project I built a full-stack application - Management System for Security Teams to scan their code repositories for sensitive information(access token, api keys, passwords)
 configuration errors, and poor code practices. I used Github API to get the content of the files in the repositories, parsed it from Base-64 and searched for specific patterns using Regex.
 
